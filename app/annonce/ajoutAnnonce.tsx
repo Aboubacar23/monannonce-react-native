@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, Alert } from "react-native";
-import { Button } from "react-native-paper"; // Importer le bouton de react-native-paper
-import { Link } from "expo-router";
+import { Button, Title } from "react-native-paper"; // Importer le bouton de react-native-paper
+import { Link, Stack } from "expo-router";
 
 export default function AjouterAnnonce() {
   const [titre, setTitre] = useState("");
@@ -18,6 +18,10 @@ export default function AjouterAnnonce() {
 
   return (
     <View style={styles.container}>
+        <Stack.Screen options={{
+            title : "Ajouter annonce"
+        }} />
+        
       <Text style={styles.title}>Ajouter une annonce</Text>
 
       {/* Champ Titre */}
@@ -51,8 +55,7 @@ export default function AjouterAnnonce() {
         icon="plus-circle"
         mode="contained"
         onPress={handleSubmit}
-        style={styles.paperButton}
-        labelStyle={styles.buttonText}
+        style={styles.button}
       >
         Ajouter l'annonce
       </Button>
@@ -87,7 +90,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingLeft: 10,
     marginBottom: 15,
-    backgroundColor: "#fff",
   },
   textarea: {
     height: 80,
@@ -98,8 +100,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 5,
   },
-  buttonText: {
+  button: {
+    width: "100%",
     fontSize: 16,
+    paddingVertical: 10,
+    marginVertical: 5
   },
   link: {
     marginTop: 10,
