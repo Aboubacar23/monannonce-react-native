@@ -12,6 +12,8 @@ export default function Index() {
       }}
     >
       <Text>Edit app/index.tsx to edit this screen.</Text>
+        <Link href={{ pathname: "/accueil" }}>Aller à l'accueil</Link>
+        <Link href={{ pathname: "/annonce/ajoutAnnonce" }}>Ajouter une annonce</Link>
         <Link href={{ pathname : '/about'}}>Go to about</Link>
     </View>
   );
