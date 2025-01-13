@@ -1,5 +1,6 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import {Link} from "expo-router";
+import { Button } from "react-native-paper";
 
 export default function Index() {
   // @ts-ignore
@@ -11,8 +12,11 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-        <Link href={{ pathname : '/about'}}>Go to about</Link>
+        <Link href={{ pathname : '/login/login'}} asChild>
+            <Button icon="home" mode="contained">
+                Login
+            </Button>
+        </Link>
     </View>
   );
 }
