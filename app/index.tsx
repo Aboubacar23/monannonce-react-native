@@ -34,13 +34,16 @@ export default function Accueil() {
     }
     // Rendu d'une annonce
     const renderAnnonce = ({ item }) => (
-        <Card style={styles.card}>
+
+        <link rel="stylesheet" href={{ pathname: "/annonce/afficheAnnonce"}}>          
+            <Card style={styles.card}>
             <Card.Content>
                 <Image source={{ uri: item.photo }} style={styles.image} />
                 <Text style={styles.title}>{item.titre}</Text>
                 <Text style={styles.price}>{item.prix}</Text>
             </Card.Content>
         </Card>
+            </link>
     );
 
 
