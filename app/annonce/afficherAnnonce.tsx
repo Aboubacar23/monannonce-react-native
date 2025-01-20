@@ -1,23 +1,18 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, Button } from "react-native";
 import { useRouter} from "expo-router";
- 
+
 export default function AfficherAnnonce() {
   const router = useRouter();
- 
-  const { titre, description, prix, photo } = route.params || {};
- 
+
+
   return (
-<View style={styles.container}>
-<Image source={{ uri: photo }} style={styles.image} />
-<Text style={styles.title}>{titre}</Text>
-<Text style={styles.description}>{description}</Text>
-<Text style={styles.price}>Prix : {prix}</Text>
-<Button title="Retour à l'accueil" onPress={() => router.push("/accueil")} />
-</View>
+    <View style={styles.container}>
+    <Text style={styles.title}>Bienvenue </Text>
+    </View>
   );
 }
- 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
