@@ -1,157 +1,92 @@
-import {Text, View, Button, Alert, Image, StyleSheet, TouchableOpacity, FlatList} from "react-native";
-import { Link } from "expo-router";
-import {Appbar, Card, Drawer, List} from "react-native-paper";
-import {useState} from "react";
+import * as React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {NavigationContainer, NavigationIndependentTree} from '@react-navigation/native';
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import Icon  from "react-native-vector-icons/Ionicons";
+import ListAnnonceSreen from "@/app/annonce/liste_annonce";
+import LoginScreen from "@/app/login/login";
 
-export default function Accueil() {
-    const handleAccueilButtonPress = () => {
-        Alert.alert("Bienvenue", "Ceci est l'écran d'accueil !");
-    };
-
-    const annonces = [
-        {
-            id: "1",
-            titre: "Maison à louer",
-            prix: "1200€/mois",
-            photo: "https://www.trnd.com/fr/blog/lieux-insolites-ou-loger/01-kens-dreamhouse-airbnb-exterior-credit-hogwash-studios_half.jpg",
-        },
-        {
-            id: "2",
-            titre: "Voiture d'occasion",
-            prix: "5000€",
-            photo: "https://www.lafinancepourtous.com/wp-content/thumbnails/uploads/2021/10/assurance_location_option_achat460-tt-width-460-height-260-fill-1-crop-0-bgcolor-ffffff.png",
-        },
-        {
-            id: "3",
-            titre: "Bureau en bois",
-            prix: "150€",
-            photo: "https://www.liberateurdidees.com/web/image/product.template/4939/image_1024?unique=af1fbcb",
-        },
-    ];
-    const [drawerVisible, setDrawerVisible] = useState(false);
-    const toggleDrawer = () => {
-        setDrawerVisible(!drawerVisible);
-    }
-    // Rendu d'une annonce
-    const renderAnnonce = ({ item }) => (
-
-        <link rel="stylesheet" href={{ pathname: "/annonce/afficheAnnonce"}}>          
-            <Card style={styles.card}>
-            <Card.Content>
-                <Image source={{ uri: item.photo }} style={styles.image} />
-                <Text style={styles.title}>{item.titre}</Text>
-                <Text style={styles.price}>{item.prix}</Text>
-            </Card.Content>
-        </Card>
-            </link>
-    );
-
-
+// Composants des écrans
+// Composants des écrans avec styles
+function HomeScreen() {
     return (
         <View style={styles.container}>
-             <Appbar.Header style={styles.header}>
-                <View style={styles.navLinks}>
-                        <Appbar.Content title="Acceuil" titleStyle={styles.headerTitle} />
-                        <Link href="/" style={styles.navLink}>Home</Link>
-                        <Link href={{ pathname: '/annonce/ajoutAnnonce'}} style={styles.navLink}>Annonce</Link>
-                        <Link href={{ pathname: '/login/login'}} style={styles.navLink}>Login</Link>
-                </View>
-            </Appbar.Header>
-
-
-            {/*    <Appbar.Header style={styles.header}>
-                <Appbar.Action icon="menu" onPress={toggleDrawer} />
-                <Appbar.Content title="Mon Annonce" style={styles.title} />
-            </Appbar.Header>
-            { drawerVisible && (
-                <Drawer.Section style={styles.drawer}>
-                    <Drawer.Item
-                        label="Home"
-                        icon="home"
-                        onPress={() => console.log("Navigate to Home")}
-                    />
-                    <Drawer.Item
-                        label="Annonce"
-                        icon="format-list-bulleted"
-                        onPress={() => console.log("Navigate to Annonce")}
-                    />
-                    <Drawer.Item
-                        label="Login"
-                        icon="login"
-                        onPress={() => console.log("Navigate to Login")}
-                    />
-                </Drawer.Section>
-            )}*/}
-
-            <FlatList
-                data={annonces}
-                renderItem={renderAnnonce}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={styles.list}
-            />
+            <Text style={styles.title}>Page d'accueil</Text>
         </View>
     );
 }
 
+
+// Création du Tab Navigator
+const Tab = createBottomTabNavigator();
+
+export default function App() {
+    return (
+        <NavigationIndependentTree>
+            <NavigationContainer>
+                <Tab.Navigator
+                    initialRouteName="Home"
+                    screenOptions={({ route }) => ({
+                        headerShown: false,
+                        tabBarStyle: styles.tabBar,
+                        tabBarActiveTintColor: '#007AFF',
+                        tabBarInactiveTintColor: '#8e8e93',
+                        tabBarIcon: ({ color, size }) => {
+                            let iconName;
+
+                            if (route.name === 'Home') {
+                                iconName = 'home-outline'; // Icône pour Home
+                            } else if (route.name === 'Annonce') {
+                                iconName = 'megaphone-outline'; // Icône pour Annonce
+                            } else if (route.name === 'Login') {
+                                iconName = 'person-outline'; // Icône pour Login
+                            }
+
+                            // Retourne l'icône appropriée
+                            // @ts-ignore
+                            return <Icon name={iconName} size={size} color={color} />;
+                        },
+                    })}
+                >
+                    <Tab.Screen name="Home" component={HomeScreen} options={{ title: "Home" }} />
+                    <Tab.Screen name="Annonce" component={ListAnnonceSreen} options={{ title: "Annonces" }} />
+                    <Tab.Screen name="Login" component={LoginScreen} options={{ title: "Login" }} />
+                </Tab.Navigator>
+            </NavigationContainer>
+        </NavigationIndependentTree>
+    );
+}
+
+// Styles CSS
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f9f9f9",
-    },
-    menuItem: {
-        marginVertical: 5, // Espacement entre les éléments du menu
-    },
-
-    header: {
-        backgroundColor: "#1e90ff", // Bleu comme l'image
-    },
-    headerTitle: {
-        color: "white", // Couleur du titre
-        fontSize: 20,
-        fontWeight: "bold",
-    },
-    navLinks: {
-        flexDirection: "row", // Les liens sont alignés horizontalement
-        alignItems: "center",
-    },
-
-    navLink: {
-        marginHorizontal: 10,
-        color: "white",
-        textDecorationLine: "underline",
-        fontSize: 16,
-    },
-    list: {
-        padding: 10,
-    },
-    card: {
-        marginBottom: 10,
-        borderRadius: 8,
-        overflow: "hidden",
-        elevation: 2,
-    },
-    image: {
-        width: "100%",
-        height: 150,
-        resizeMode: "cover",
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#f5f5f5',
+        padding: 20,
     },
     title: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginTop: 10,
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 20,
     },
-    price: {
+    button: {
+        backgroundColor: '#5b33ff',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: '#fff',
         fontSize: 16,
-        color: "#1e90ff",
-        marginTop: 5,
+        fontWeight: 'bold',
     },
-    drawer: {
-        backgroundColor: "#f0f0f0",
-        padding: 10,
-        position: "absolute",
-        top: 0, // Juste en dessous de la barre d'application
-        left: 0,
-        right: 0,
-        elevation: 4, // Ombre pour le drawer
+    tabBar: {
+        backgroundColor: '#ffffff',
+        borderTopWidth: 1,
+        borderTopColor: '#d1d1d1',
+        height: 60,
     },
 });

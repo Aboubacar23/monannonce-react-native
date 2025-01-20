@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
 
     link2: {
         textDecorationLine: "underline", // Souligne le texte
-        color: "#1e90ff", // Couleur bleue pour le style lien
+        color: "#5b33ff", // Couleur bleue pour le style lien
         marginHorizontal: 10, // Ajoute un espace entre les liens
         fontSize: 16, // Taille de texte confortable
     },

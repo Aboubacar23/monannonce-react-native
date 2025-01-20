@@ -16,12 +16,13 @@ export default function AjouterAnnonce() {
     Alert.alert("Annonce ajoutée", `Titre : ${titre}\nDescription : ${description}\nPrix : ${prix}`);
   };
 
-  return (
+  // @ts-ignore
+    return (
     <View style={styles.container}>
         <Stack.Screen options={{
             title : "Ajouter annonce"
         }} />
-        
+
       <Text style={styles.title}>Ajouter une annonce</Text>
 
       {/* Champ Titre */}
@@ -60,10 +61,6 @@ export default function AjouterAnnonce() {
         Ajouter l'annonce
       </Button>
 
-      {/* Lien pour retourner à l'accueil */}
-      <Link href="/accueil" style={styles.link}>
-        <Text style={styles.linkText}>Retour à l'accueil</Text>
-      </Link>
     </View>
   );
 }
