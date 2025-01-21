@@ -2,17 +2,17 @@ import {Text, View, Alert, Image, StyleSheet, FlatList, ActivityIndicator, Touch
 import {Appbar, Card, Drawer, List} from "react-native-paper";
 import {useEffect, useState} from "react";
 import Icon from "react-native-vector-icons/Ionicons";
-import showAnnonce from "./showAnnonce";
 import {useRouter} from "expo-router";
 
 export default function ListeAnnonce() {
+    const API_URL = process.env.EXPO_PUBLIC_API_URL;
     const [annonces, setAnnonces] = useState([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
-
+    console.log('Base URL:', API_URL);
     const fetchAnnonces = async () => {
         try {
-            const response = await fetch("https://cf0b-185-48-252-9.ngrok-free.app/api/annonces/lists");
+            const response = await fetch(`${API_URL}/annonces/lists`);
             if (!response.ok)
             {
                 throw new Error("Erreur lors de la récuperations des annonce");

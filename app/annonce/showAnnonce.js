@@ -5,6 +5,7 @@ import {useSearchParams} from "expo-router/build/hooks";
 import {Appbar} from "react-native-paper";
 
 export default function ShowAnnonce() {
+  const API_URL = process.env.EXPO_PUBLIC_API_URL;
   const {id} = useLocalSearchParams();
   const [loading, setLoading] = useState(true); // État pour l'indicateur de chargement
   const [annonce, setAnnonce] = useState(null); // État pour stocker l'annonce
@@ -12,7 +13,7 @@ export default function ShowAnnonce() {
   //const id = id.id;
   const fetchAnnonceDetails = async () => {
     try {
-      const response = await fetch(`https://cf0b-185-48-252-9.ngrok-free.app/api/annonces/show/${id}`);
+      const response = await fetch(`${API_URL}/annonces/show/${id}`);
       if (!response.ok) {
         throw new Error("Erreur lors du chargement de l'annonce.");
       }
