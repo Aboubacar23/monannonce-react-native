@@ -5,16 +5,10 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import Icon  from "react-native-vector-icons/Ionicons";
 import ListAnnonceSreen from "@/app/annonce/liste_annonce";
 import LoginScreen from "@/app/login/login";
-
+import AccueilScreen from "@/app/accueil";
 // Composants des écrans
 // Composants des écrans avec styles
-function HomeScreen() {
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Page d'accueil</Text>
-        </View>
-    );
-}
+
 
 
 // Création du Tab Navigator
@@ -48,7 +42,7 @@ export default function App() {
                         },
                     })}
                 >
-                    <Tab.Screen name="Home" component={HomeScreen} options={{ title: "Home" }} />
+                    <Tab.Screen name="Home" component={AccueilScreen} options={{ title: "Home" }} />
                     <Tab.Screen name="Annonce" component={ListAnnonceSreen} options={{ title: "Annonces" }} />
                     <Tab.Screen name="Login" component={LoginScreen} options={{ title: "Login" }} />
                 </Tab.Navigator>

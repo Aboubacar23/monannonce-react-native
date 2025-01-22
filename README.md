@@ -1,51 +1,106 @@
-# Welcome to your Expo app 👋
+# MonAnnonce - Projet Frontend React Native
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Bienvenue dans le frontend de l'application mobile **MonAnnonce**, développée avec [React Native](https://reactnative.dev) et gérée avec [Expo](https://expo.dev). Cette application offre une expérience utilisateur intuitive pour gérer des annonces à partir de dispositifs mobiles.
 
-## Get started
+## Pré-requis
 
-1. Install dependencies
+Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur votre système :
 
-   ```bash
-   npm install
-   ```
+- [Node.js](https://nodejs.org) (version LTS recommandée)
+- [npm](https://www.npmjs.com/) ou [yarn](https://yarnpkg.com/)
+- Expo CLI :
+  ```bash
+  npm install -g expo-cli
+  ```
 
-2. Start the app
+## Installation
 
-   ```bash
-    npx expo start
-   ```
+Clonez le dépôt et installez les dépendances nécessaires :
 
-In the output, you'll find options to open the app in a
+```bash
+git clone https://github.com/votre-utilisateur/monannonce-react-native.git
+cd monannonce-react-native
+npm install
+```
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Lancer l'application
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Pour lancer l'application en mode développement, exécutez :
 
-## Get a fresh project
+```bash
+npx expo start
+```
 
-When you're ready, run:
+Cela ouvrira une interface web où vous pourrez choisir :
+
+- D'ouvrir l'application dans l'émulateur Android ou iOS (si configuré).
+- De scanner le QR Code avec l'application **Expo Go** pour tester sur un appareil physique.
+
+## Structure du projet
+
+- **app/** : Contient les écrans principaux de l'application.
+- **components/** : Composants réutilisables.
+- **assets/** : Ressources comme les images, icônes ou polices.
+- **styles/** : Fichiers de styles pour les éléments de l'interface.
+
+## Fonctionnalités principales
+
+- **Gestion des annonces** : Créer, consulter, modifier et supprimer des annonces.
+- **Connexion à une API Backend** : Communication avec le backend via des requêtes HTTP pour synchroniser les données.
+
+## Variables d'environnement
+
+Ajoutez un fichier `.env` à la racine pour configurer les variables liées à l'API :
+
+```env
+API_URL=http://localhost:3000/api
+```
+
+## Commandes utiles
+
+### Installer ou mettre à jour les dépendances
+
+```bash
+npm install
+```
+
+### Lancer en mode développement
+
+```bash
+npx expo start
+```
+
+### Nettoyer le cache Expo
+
+```bash
+npx expo start -c
+```
+
+### Réinitialiser le projet
 
 ```bash
 npm run reset-project
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Tests
 
-## Learn more
+Actuellement, aucun test automatisé n'est configuré pour ce projet. Vous pouvez en ajouter avec des frameworks comme [Jest](https://jestjs.io/) ou [React Native Testing Library](https://testing-library.com/docs/react-native-testing-library/intro/).
 
-To learn more about developing your project with Expo, look at the following resources:
+## Contributions
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Les contributions sont les bienvenues ! Si vous trouvez un bug ou souhaitez proposer une amélioration, ouvrez une issue ou une pull request.
 
-## Join the community
+## Ressources utiles
 
-Join our community of developers creating universal apps.
+- [Documentation Expo](https://docs.expo.dev/)
+- [Documentation React Native](https://reactnative.dev/docs/getting-started)
+- [API Backend](https://github.com/votre-utilisateur/monannonce-backend) (dépôt associé au backend)
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-# monannonce-react-native
+---
+
+### Auteurs
+
+- **Nom 1** : Rôle principal sur le frontend
+- **Nom 2** : Contribution au design et intégration
+- **Nom 3** : Support technique backend
+
