@@ -1,6 +1,6 @@
 import {Alert, StyleSheet, Text, View} from "react-native";
-import {Avatar, Button, TextInput} from "react-native-paper";
-import {Link, Stack, useRouter} from "expo-router";
+import {Appbar, Avatar, Button, TextInput} from "react-native-paper";
+import {Link, Stack, useNavigation, useRouter} from "expo-router";
 import React, {useState} from "react";
 import { useRegister } from "@/components/register";
 import {showMessage} from "react-native-flash-message";
@@ -14,7 +14,7 @@ const register =() => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-
+    const navigation = useNavigation();
     const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
     const handleRegister = async () => {
@@ -83,61 +83,65 @@ const register =() => {
 
     return (
         <View style={styles.container}>
-            <Stack.Screen options={{
-                title: "Register"
-            }} />
-            <Avatar.Icon size={80} icon="account" style={styles.avatar} />
-            <Text style={styles.title}>Register Form</Text>
-            <TextInput
-                label="Nom"
-                mode="outlined"
-                value={nom}
-                onChangeText={setNom}
-                style={styles.input}
-                autoCapitalize="none"
-            />
-            <TextInput
-            label="Prenom"
-            mode="outlined"
-            value={prenom}
-            onChangeText={setPrenom}
-            style={styles.input}
-            autoCapitalize="none"
-            />
-            <TextInput
-            label="Email"
-            mode="outlined"
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            />
-            <TextInput
-                label="Password"
-                mode="outlined"
-                value={password}
-                onChangeText={setPassword}
-                style={styles.input}
-                secureTextEntry
-            />
-            <TextInput
-                label="Confirm Password"
-                mode="outlined"
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                style={styles.input}
-                secureTextEntry
-            />
-            <Button
-                icon="login"
-                mode="contained"
-                style={styles.button}
-                loading={loading}
-                onPress={handleRegister}
-            >
-                Créer un compte
-            </Button>
+            <Appbar.Header style={styles.appbar}>
+                <Appbar.BackAction color="white" onPress={() => navigation.goBack() } />
+                <Appbar.Content title="Register" color="white" />
+                <Appbar.Action icon="plus" color="white" onPress={() => router.push({pathname: "/annonce/ajoutAnnonce"})} />
+            </Appbar.Header>
+            <View style={styles.childContainer}>
+                <Avatar.Icon size={60} icon="account" style={styles.avatar} />
+                <Text style={styles.title}>Register Form</Text>
+                <TextInput
+                    label="Nom"
+                    mode="outlined"
+                    value={nom}
+                    onChangeText={setNom}
+                    style={styles.input}
+                    autoCapitalize="none"
+                />
+                <TextInput
+                    label="Prenom"
+                    mode="outlined"
+                    value={prenom}
+                    onChangeText={setPrenom}
+                    style={styles.input}
+                    autoCapitalize="none"
+                />
+                <TextInput
+                    label="Email"
+                    mode="outlined"
+                    value={email}
+                    onChangeText={setEmail}
+                    style={styles.input}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                />
+                <TextInput
+                    label="Password"
+                    mode="outlined"
+                    value={password}
+                    onChangeText={setPassword}
+                    style={styles.input}
+                    secureTextEntry
+                />
+                <TextInput
+                    label="Confirm Password"
+                    mode="outlined"
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    style={styles.input}
+                    secureTextEntry
+                />
+                <Button
+                    icon="login"
+                    mode="contained"
+                    style={styles.button}
+                    loading={loading}
+                    onPress={handleRegister}
+                >
+                    Créer un compte
+                </Button>
+            </View>
         </View>
     )
 }
@@ -145,16 +149,24 @@ const register =() => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-        backgroundColor: '#f5f5f5',
+        padding: 0,
+        backgroundColor: '#1A3D5B',
     },
+    childContainer: {
+        flex: 1,
+        alignItems: "center",
+        padding: 20,
+        backgroundColor: "#E8EBEE",
+    },
+
     avatar: {
         backgroundColor: "#f9f9f9",
         marginBottom: 20,
     },
-
+    appbar: {
+        backgroundColor: "#045659",
+        color: "#fff",
+    },
     title: {
         fontSize: 30,
         fontWeight: "bold",
@@ -170,6 +182,7 @@ const styles = StyleSheet.create({
         width: "100%",
         paddingVertical: 5,
         marginVertical: 10,
+        backgroundColor: "#045659",
     },
 
     link: {

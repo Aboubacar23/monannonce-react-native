@@ -1,8 +1,8 @@
 import {Text, View, Alert, Image, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity} from "react-native";
 import {Appbar, Card, Drawer, List} from "react-native-paper";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Icon from "react-native-vector-icons/Ionicons";
-import {useRouter} from "expo-router";
+import {router, useRouter} from "expo-router";
 
 export default function ListeAnnonce() {
     const API_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -56,9 +56,11 @@ export default function ListeAnnonce() {
 
     return (
         <View style={styles.container}>
-            {/*<Appbar.Header style={styles.header}>
-                <Appbar.Content title="Liste des annonces"  style={styles.title}/>
-            </Appbar.Header>*/}
+            <Appbar.Header style={styles.appbar}>
+                <Appbar.Action color="white"  icon="menu"/>
+                <Appbar.Content title="Listes des annonces" color="white" />
+                <Appbar.Action icon="plus" color="white" onPress={() => router.push({pathname: "/annonce/ajoutAnnonce"})} />
+            </Appbar.Header>
 
             {/* Indicateur de Chargement */}
             {loading ? (
@@ -82,10 +84,14 @@ export default function ListeAnnonce() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f9f9f9",
+        backgroundColor: "#E8EBEE",
     },
     menuItem: {
         marginVertical: 5, // Espacement entre les éléments du menu
+    },
+    appbar: {
+        backgroundColor: "#045659",
+        color: "#fff",
     },
     row: {
         flexDirection: "row",
@@ -96,7 +102,7 @@ const styles = StyleSheet.create({
     eye: {
         fontSize: 17,
         width: 15,
-        padding: 25
+        padding: 25,
     },
     header: {
         backgroundColor: "#5b33ff", // Bleu comme l'image
@@ -144,7 +150,7 @@ const styles = StyleSheet.create({
     },
     price: {
         fontSize: 16,
-        color: "#5b33ff",
+        color: "#045659",
         marginTop: 5,
     },
     drawer: {
@@ -159,7 +165,7 @@ const styles = StyleSheet.create({
     detailsButton: {
         marginTop: 10,
         padding: 10,
-        backgroundColor: "#5b33ff",
+        backgroundColor: "#045659",
         paddingVertical: 10,
         borderRadius: 5,
         alignItems: "center",

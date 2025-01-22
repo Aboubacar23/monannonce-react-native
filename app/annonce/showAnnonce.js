@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {View, Text, StyleSheet, Image, Button, Alert, ActivityIndicator} from "react-native";
-import {useLocalSearchParams, useRouter} from "expo-router";
+import {useLocalSearchParams, useNavigation, useRouter} from "expo-router";
 import {useSearchParams} from "expo-router/build/hooks";
 import {Appbar} from "react-native-paper";
 
@@ -9,7 +9,7 @@ export default function ShowAnnonce() {
   const {id} = useLocalSearchParams();
   const [loading, setLoading] = useState(true); // État pour l'indicateur de chargement
   const [annonce, setAnnonce] = useState(null); // État pour stocker l'annonce
-
+  const navigation = useNavigation();
   //const id = id.id;
   const fetchAnnonceDetails = async () => {
     try {
@@ -60,7 +60,12 @@ export default function ShowAnnonce() {
   return (
 
       <View style={styles.container}>
-        <View style={styles.container}>
+        <Appbar.Header style={styles.appbar}>
+          <Appbar.BackAction color="white"  onPress={() => navigation.goBack()}/>
+          <Appbar.Content title="Détails annonce" color="white" />
+          <Appbar.Action icon="plus" color="white" onPress={() => router.push({pathname: "/annonce/ajoutAnnonce"})} />
+        </Appbar.Header>
+        <View style={styles.chilDContainer}>
             <Image source={{ uri: annonce.image }} style={styles.image} />
             <Text style={styles.title}>{annonce.titre}</Text>
             <Text style={styles.description}>{annonce.description}</Text>
@@ -75,6 +80,11 @@ export default function ShowAnnonce() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 0,
+    backgroundColor: "#fff",
+  },
+  chilDContainer: {
+    flex: 1,
     padding: 20,
     backgroundColor: "#fff",
   },
@@ -82,6 +92,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  appbar: {
+    backgroundColor: "#045659",
+    color: "#fff",
   },
   header: {
     backgroundColor: "#5b33ff", // Bleu comme l'image
