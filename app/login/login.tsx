@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {Text, View, StyleSheet, Alert} from "react-native";
-import { TextInput, Button, Avatar } from "react-native-paper";
-import { Link, Stack, useRouter } from "expo-router";
+import {TextInput, Button, Avatar, Appbar} from "react-native-paper";
+import {Link, router, Stack, useRouter} from "expo-router";
 import { showMessage } from "react-native-flash-message";
 
 const Login = () => {
@@ -73,42 +73,44 @@ const Login = () => {
 
     return (
         <View style={styles.container}>
-            <Stack.Screen
-                options={{
-                    title: "Login",
-                }}
-            />
-            <Avatar.Icon size={80} icon="account" style={styles.avatar} />
-            <Text style={styles.title}>Welcome Back</Text>
-            <TextInput
-                label="Email"
-                mode="outlined"
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-            />
-            <TextInput
-                label="Password"
-                mode="outlined"
-                style={styles.input}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
-            <Button
-                icon="login"
-                mode="contained"
-                style={styles.button}
-                loading={loading}
-                onPress={handleLogin}
-            >
-                Se Connecter
-            </Button>
-            <View style={styles.linksContainer}>
-                <Link href={{ pathname : '/login/register'}} style={styles.link2}>Créer un compte</Link>
-                <Link href={{ pathname : '/login/register'}} style={styles.link2}>Mot de passe oublié ?</Link>
+            <Appbar.Header style={styles.appbar}>
+                <Appbar.Action icon="menu" color="white"/>
+                <Appbar.Content title="Se Connecter" color="white" />
+                <Appbar.Action icon="plus" color="white" onPress={() => router.push({pathname: "/annonce/ajoutAnnonce"})} />
+            </Appbar.Header>
+            <View style={styles.childContainer}>
+                <Avatar.Icon size={60} icon="account" style={styles.avatar} />
+                <Text style={styles.title}>Welcome Back</Text>
+                <TextInput
+                    label="Email"
+                    mode="outlined"
+                    style={styles.input}
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                />
+                <TextInput
+                    label="Password"
+                    mode="outlined"
+                    style={styles.input}
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                />
+                <Button
+                    icon="login"
+                    mode="contained"
+                    style={styles.button}
+                    loading={loading}
+                    onPress={handleLogin}
+                >
+                    Se Connecter
+                </Button>
+                <View style={styles.linksContainer}>
+                    <Link href={{ pathname : '/login/register'}} style={styles.link2}>Créer un compte</Link>
+                    <Link href={{ pathname : '/login/register'}} style={styles.link2}>Mot de passe oublié ?</Link>
+                </View>
             </View>
         </View>
     );
@@ -117,19 +119,29 @@ const Login = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center",
+        padding: 0,
+        backgroundColor: "#1A3D5B",
+    },
+    childContainer: {
+        flex: 1,
+        //justifyContent: "center",
         alignItems: "center",
         padding: 20,
-        backgroundColor: "#f5f5f5",
+        backgroundColor: "#E8EBEE",
     },
+
     avatar: {
         backgroundColor: "#f9f9f9",
         marginBottom: 20,
     },
+    appbar: {
+        backgroundColor: "#045659",
+        color: "#fff",
+    },
     title: {
         fontSize: 30,
         fontWeight: "bold",
-        marginBottom: 20,
+        marginBottom: 10,
         color: "#333",
     },
     input: {
@@ -140,10 +152,11 @@ const styles = StyleSheet.create({
         width: "100%",
         paddingVertical: 5,
         marginVertical: 10,
+        backgroundColor: "#045659"
     },
     link2: {
         textDecorationLine: "underline",
-        color: "#5b33ff",
+        color: "#045659",
         marginHorizontal: 10,
         fontSize: 16,
     },

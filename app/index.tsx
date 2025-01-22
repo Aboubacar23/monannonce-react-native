@@ -6,6 +6,8 @@ import Icon  from "react-native-vector-icons/Ionicons";
 import ListAnnonceSreen from "@/app/annonce/liste_annonce";
 import LoginScreen from "@/app/login/login";
 import AccueilScreen from "@/app/accueil";
+import RegisterScreen from "@/app/login/register";
+import {createStackNavigator} from "@react-navigation/stack";
 // Composants des écrans
 // Composants des écrans avec styles
 
@@ -13,6 +15,16 @@ import AccueilScreen from "@/app/accueil";
 
 // Création du Tab Navigator
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+// Stack imbriqué pour Login
+function LoginStack() {
+    return (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+        </Stack.Navigator>
+    );
+}
 
 export default function App() {
     return (
@@ -23,8 +35,8 @@ export default function App() {
                     screenOptions={({ route }) => ({
                         headerShown: false,
                         tabBarStyle: styles.tabBar,
-                        tabBarActiveTintColor: '#007AFF',
-                        tabBarInactiveTintColor: '#8e8e93',
+                        tabBarActiveTintColor: '#00ffc4',
+                        tabBarInactiveTintColor: '#fff',
                         tabBarIcon: ({ color, size }) => {
                             let iconName;
 
@@ -44,7 +56,7 @@ export default function App() {
                 >
                     <Tab.Screen name="Home" component={AccueilScreen} options={{ title: "Home" }} />
                     <Tab.Screen name="Annonce" component={ListAnnonceSreen} options={{ title: "Annonces" }} />
-                    <Tab.Screen name="Login" component={LoginScreen} options={{ title: "Login" }} />
+                    <Tab.Screen name="Login" component={LoginStack} options={{ title: "Mon Compte" }} />
                 </Tab.Navigator>
             </NavigationContainer>
         </NavigationIndependentTree>
@@ -57,7 +69,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#1A3D5B',
         padding: 20,
     },
     title: {
@@ -78,7 +90,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     tabBar: {
-        backgroundColor: '#ffffff',
+        backgroundColor: '#045659',
         borderTopWidth: 1,
         borderTopColor: '#d1d1d1',
         height: 60,
