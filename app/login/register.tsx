@@ -22,12 +22,6 @@ const register =() => {
         console.log("Confirme Password : ", confirmPassword);
         if (password !== confirmPassword) {
             Alert.alert('Erreur', 'Les mots de passe ne correspondent pas.');
-            /*showMessage({
-                 message: "Erreur",
-                 description: "les mots de passe ne correspondent pas",
-                 type: "danger",
-                 icon: "danger"
-             });*/
             return;
         }
         setLoading(true);
@@ -48,34 +42,14 @@ const register =() => {
             if (res.ok) {
 
                 Alert.alert('Erreur', 'User créé avec succès !');
-                /*showMessage({
-                    message: "Erreur",
-                    description: "les mots de passe ne correspondent pas",
-                    type: "danger",
-                    icon: "danger"
-                });*/
                 router.push("../login/login");
 
             } else {
                 Alert.alert('Erreur', data.message || "Une erreur est survenue.");
-                /*showMessage({
-                    message: "Erreur",
-                    description: data.message || "Une erreur est survenue.",
-                    type: "danger",
-                    icon: "danger",
-                });**/
             }
         } catch (error) {
             console.log(error);
             Alert.alert('Erreur',"Erreur de connexion au serveur.");
-
-            /*showMessage({
-                message: "Erreur",
-                description: "Erreur de connexion au serveur.",
-                type: "danger",
-                icon: "danger",
-            });*/
-
         } finally {
             setLoading(false);
         }

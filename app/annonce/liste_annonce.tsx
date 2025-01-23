@@ -3,14 +3,19 @@ import {Appbar, Card, Drawer, List} from "react-native-paper";
 import React, {useEffect, useState} from "react";
 import Icon from "react-native-vector-icons/Ionicons";
 import {router, useRouter} from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ListeAnnonce() {
     const API_URL = process.env.EXPO_PUBLIC_API_URL;
     const [annonces, setAnnonces] = useState([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
-    console.log('Base URL:', API_URL);
+
     const fetchAnnonces = async () => {
+
+        const  user = await AsyncStorage.getItem('user');
+        //console.log('Base URL:', API_URL);
+        console.log('User de la liste des annonce:', user);
         try {
             const response = await fetch(`${API_URL}/annonces/lists`);
             if (!response.ok)
@@ -57,7 +62,7 @@ export default function ListeAnnonce() {
     return (
         <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                <Appbar.Action color="white"  icon="menu"/>
+                <Appbar.BackAction color="white"  onPress={() => router.push({pathname: "/"})}/>
                 <Appbar.Content title="Listes des annonces" color="white" />
                 <Appbar.Action icon="plus" color="white" onPress={() => router.push({pathname: "/annonce/ajoutAnnonce"})} />
             </Appbar.Header>

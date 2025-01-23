@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {View, Text, StyleSheet, Image, Button, Alert, ActivityIndicator} from "react-native";
 import {useLocalSearchParams, useNavigation, useRouter} from "expo-router";
-import {useSearchParams} from "expo-router/build/hooks";
 import {Appbar} from "react-native-paper";
 
 export default function ShowAnnonce() {
@@ -20,9 +19,6 @@ export default function ShowAnnonce() {
 
       const data = await response.json();
       setAnnonce(data.annonce);
-
-      console.log("response de fetch");
-      console.log(data.annonce);
     }catch (error) {
       // @ts-ignore
       Alert.alert("Erreur", error.message);
