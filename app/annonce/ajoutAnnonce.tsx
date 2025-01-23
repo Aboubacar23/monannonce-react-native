@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { View, Text, TextInput, StyleSheet, Alert } from "react-native";
 import {Appbar, Avatar, Button, Title} from "react-native-paper";
 import {useNavigation, useRouter} from "expo-router";
-import {SelectList} from "react-native-dropdown-select-list"; // Importer le bouton de react-native-paper
+import {SelectList} from "react-native-dropdown-select-list";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {checkUserLoggedIn} from "@/app/hooks/checkUserLoggedIn";
 
 export default function AjouterAnnonce() {
   const [titre, setTitre] = useState("");
   const [description, setDescription] = useState("");
   const [prix, setPrix] = useState("");
-  const [categorie, setCategorie] = useState("");
   const [image, setImage] = useState("");
   const [selected, setSelected ] = useState('Véhicule');
   const [loading, setLoading ] = useState(false);
@@ -23,9 +24,19 @@ export default function AjouterAnnonce() {
     {key: 'Immobilier', value: "Immobilier"},
     {key: 'Autres', value: "Autres"},
   ];
+  // Vérifiez si l'utilisateur est connecté au montage du composant
+  useEffect(() => {
+    checkUserLoggedIn(router);
+  }, []);
 
   const handleSubmit = async () => {
-    if (!titre || !categorie || !prix) {
+    const userStore = await AsyncStorage.getItem('user');
+    const user = JSON.parse(userStore);
+    if (!user || !user.id) {
+      Alert.alert("Erreur", "Utilisateur non connecté.");
+      return;
+    }
+    if (!titre || !selected || !prix) {
       Alert.alert("Erreur", "Tous les champs doivent être remplis");
       return;
     }
@@ -40,11 +51,13 @@ export default function AjouterAnnonce() {
           titre,
           prix,
           image,
-          categorie,
-          description
+          categorie: selected,
+          description,
+          user_id: user.id
         }),
       });
       const data = await res.json();
+      console.log(data);
       if (res.ok){
         Alert.alert("Erreur", "Annonce créé avec succès !");
         router.push("../annonce/liste_annonce");
@@ -100,7 +113,7 @@ export default function AjouterAnnonce() {
                 style={styles.input}
                 placeholder="Image"
                 value={image}
-                onChangeText={setDescription}
+                onChangeText={setImage}
                 multiline
             />
           </View>

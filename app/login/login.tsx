@@ -3,6 +3,7 @@ import {Text, View, StyleSheet, Alert} from "react-native";
 import {TextInput, Button, Avatar, Appbar} from "react-native-paper";
 import {Link, router, Stack, useRouter} from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import FlashMessage, {showMessage} from "react-native-flash-message";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -14,8 +15,22 @@ const Login = () => {
         console.log("Email", email);
         console.log("Password", password);
         if (!email || !password) {
-            Alert.alert('Erreur', 'Veuillez remplir tous les champs !');
-            return;
+            return showMessage({
+                message: 'Erreur',
+                description: 'Veuillez remplir tous les champs !',
+                type: 'danger',
+                icon: 'danger',
+            });
+        }
+
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!re.test(email) || email.length === 0) {
+            return showMessage({
+                message: 'Erreur',
+                description: 'Votre email est invalide',
+                type: 'danger',
+                icon: 'danger',
+            });
         }
 
         setLoading(true);
@@ -38,10 +53,14 @@ const Login = () => {
                 await AsyncStorage.setItem('user', JSON.stringify(data.user));
                 const user = await AsyncStorage.getItem('user');
                 console.log("User login : ", user);
-
                 console.log("----------------------------");
 
-                Alert.alert('Success', 'Connexion !');
+                showMessage({
+                    message: 'Success',
+                    description: 'Connexion établie avec succès !',
+                    type: 'success',
+                    icon: 'success',
+                });
                 router.push("../annonce/liste_annonce"); // Redirection vers la page d'accueil après connexion
             } else {
                 Alert.alert('Erreur', data.message || "Identifiants incorrects.");
@@ -61,6 +80,7 @@ const Login = () => {
                 <Appbar.Content title="Se Connecter" color="white" />
                 <Appbar.Action icon="plus" color="white" onPress={() => router.push({pathname: "/annonce/ajoutAnnonce"})} />
             </Appbar.Header>
+            <FlashMessage position="center" />
             <View style={styles.childContainer}>
                 <Avatar.Icon size={60} icon="account" style={styles.avatar} />
                 <Text style={styles.title}>Welcome Back</Text>

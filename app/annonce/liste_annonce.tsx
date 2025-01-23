@@ -12,10 +12,6 @@ export default function ListeAnnonce() {
     const router = useRouter();
 
     const fetchAnnonces = async () => {
-
-        const  user = await AsyncStorage.getItem('user');
-        //console.log('Base URL:', API_URL);
-        console.log('User de la liste des annonce:', user);
         try {
             const response = await fetch(`${API_URL}/annonces/lists`);
             if (!response.ok)
@@ -49,7 +45,7 @@ export default function ListeAnnonce() {
                     <Text style={styles.price}>{item.prix} Є</Text>
                     <TouchableOpacity style={styles.detailsButton}
                         onPress={() => router.push({ pathname:"/annonce/showAnnonce", params: { id: item.id } })}>
-                    <Text style={styles.detailsButtonText}>
+                         <Text style={styles.detailsButtonText}>
                             <Icon name="eye" style={styles.eye} />
                         </Text>
                     </TouchableOpacity>
