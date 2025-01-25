@@ -9,11 +9,9 @@ import ajouterAnnonce from "./annonce/ajoutAnnonce";
 const logo = require("../assets/images/s.png");
 
 const DATA = [
-  { id: "1", name: "Henry Curtis", role: "Vendeur", rating: 5, image: "https://randomuser.me/api/portraits/men/1.jpg" },
-  { id: "2", name: "Michael Harvey", role: "Vendeur", rating: 3, image: "https://randomuser.me/api/portraits/men/2.jpg" },
-  { id: "3", name: "Craig Arnold", role: "Vendeur", rating: 5, image: "https://randomuser.me/api/portraits/men/3.jpg" },
-  { id: "4", name: "Ortiz Wheeler", role: "Acheteur", rating: 0, image: "https://randomuser.me/api/portraits/men/4.jpg" },
-  { id: "5", name: "Curtis Michael", role: "Acheteur", rating: 0, image: "https://randomuser.me/api/portraits/men/5.jpg" },
+  { id: "1", name: "Souhaila RAZFA", role: "DEV FULL-STACK", rating: 5, image: "https://cdn-icons-png.flaticon.com/512/4086/4086699.png" },
+  { id: "2", name: "Doha EL ACHAB", role: "CHEF PROJET", rating: 3, image: "https://cdn-icons-png.flaticon.com/512/4086/4086699.png" },
+  { id: "3", name: "Aboubacar Sidiki CONDE", role: "DEV FULL-STACK", rating: 5, image: "https://lh3.googleusercontent.com/a/ACg8ocIp4HzxFlTN0qZYkcJtBdznLpeFuzDIujhHHTpHQxdKO844wiN2Gw=s288-c-no" },
 ];
 
 export default function AccueilScreen() {
@@ -40,11 +38,11 @@ export default function AccueilScreen() {
       <View style={styles.cardContent}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.role}>{item.role}</Text>
-        {item.role === "Vendeur" && (
+        {item.role === "DEV FULL-STACK" && (
           <View style={styles.stars}>{renderStars(item.rating)}</View>
         )}
       </View>
-      {item.role === "Vendeur" && item.rating === 5 && (
+      {item.role === "DEV FULL-STACK" && item.rating === 5 && (
         <Image
           source={{
             uri: "https://icon-library.com/images/medal-icon-png/medal-icon-png-26.jpg",
@@ -66,7 +64,7 @@ export default function AccueilScreen() {
         <SafeAreaView style={styles.container}>
           {/* Logo avant le titre */}
           <Image source={logo} style={styles.logo} />
-          <Text style={styles.header}>Aller plus loin avec nos annonces</Text>
+          <Text style={styles.header}>Membres du groupe</Text>
           <FlatList
               data={DATA}
               renderItem={renderItem}

@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import {Text, View, StyleSheet, Alert} from "react-native";
 import {TextInput, Button, Avatar, Appbar} from "react-native-paper";
 import {Link, router, Stack, useRouter} from "expo-router";
-import { showMessage } from "react-native-flash-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import FlashMessage, {showMessage} from "react-native-flash-message";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -14,14 +15,22 @@ const Login = () => {
         console.log("Email", email);
         console.log("Password", password);
         if (!email || !password) {
-            Alert.alert('Erreur', 'Veuillez remplir tous les champs !');
-            /*showMessage({
-                message: "Erreur",
-                description: "Veuillez remplir tous les champs.",
-                type: "danger",
-                icon: "danger",
-            });*/
-            return;
+            return showMessage({
+                message: 'Erreur',
+                description: 'Veuillez remplir tous les champs !',
+                type: 'danger',
+                icon: 'danger',
+            });
+        }
+
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!re.test(email) || email.length === 0) {
+            return showMessage({
+                message: 'Erreur',
+                description: 'Votre email est invalide',
+                type: 'danger',
+                icon: 'danger',
+            });
         }
 
         setLoading(true);
@@ -38,34 +47,27 @@ const Login = () => {
             });
 
             const data = await response.json();
-
             if (response.ok) {
-                Alert.alert('Success', 'Connexion !');
-                /*showMessage({
-                    message: "Succès",
-                    description: "Connexion réussie!",
-                    type: "success",
-                    icon: "success",
-                });*/
-                router.push("../annonce/liste_annonce"); // Redirection vers la page d'accueil après connexion
+                console.log("-----------------------------");
+                await AsyncStorage.setItem("token", data.token);
+                await AsyncStorage.setItem('user', JSON.stringify(data.user));
+                const user = await AsyncStorage.getItem('user');
+                console.log("User login : ", user);
+                console.log("----------------------------");
+
+                showMessage({
+                    message: 'Success',
+                    description: 'Connexion établie avec succès !',
+                    type: 'success',
+                    icon: 'success',
+                });
+                router.push("/"); // Redirection vers la page d'accueil après connexion
             } else {
                 Alert.alert('Erreur', data.message || "Identifiants incorrects.");
-                /*showMessage({
-                    message: "Erreur",
-                    description: data.message || "Identifiants incorrects.",
-                    type: "danger",
-                    icon: "danger",
-                });*/
             }
         } catch (error) {
             console.error(error);
             Alert.alert('Erreur', "Problème de connexion au serveur.");
-            /*showMessage({
-                message: "Erreur",
-                description: "Problème de connexion au serveur.",
-                type: "danger",
-                icon: "danger",
-            });*/
         } finally {
             setLoading(false);
         }
@@ -74,10 +76,11 @@ const Login = () => {
     return (
         <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                <Appbar.Action icon="menu" color="white"/>
+                <Appbar.BackAction color="white" onPress={() => router.push({pathname: "/"}) } />
                 <Appbar.Content title="Se Connecter" color="white" />
                 <Appbar.Action icon="plus" color="white" onPress={() => router.push({pathname: "/annonce/ajoutAnnonce"})} />
             </Appbar.Header>
+            <FlashMessage position="center" />
             <View style={styles.childContainer}>
                 <Avatar.Icon size={60} icon="account" style={styles.avatar} />
                 <Text style={styles.title}>Welcome Back</Text>

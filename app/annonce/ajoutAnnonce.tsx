@@ -1,67 +1,142 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { View, Text, TextInput, StyleSheet, Alert } from "react-native";
-import {Appbar, Button, Title} from "react-native-paper";
-import {useNavigation} from "expo-router"; // Importer le bouton de react-native-paper
+import {Appbar, Avatar, Button, Title} from "react-native-paper";
+import {useNavigation, useRouter} from "expo-router";
+import {SelectList} from "react-native-dropdown-select-list";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {checkUserLoggedIn} from "@/app/hooks/checkUserLoggedIn";
+import FlashMessage from "react-native-flash-message";
 
 export default function AjouterAnnonce() {
   const [titre, setTitre] = useState("");
   const [description, setDescription] = useState("");
   const [prix, setPrix] = useState("");
+  const [image, setImage] = useState("");
+  const [selected, setSelected ] = useState('Véhicule');
+  const [loading, setLoading ] = useState(false);
   const navigation = useNavigation();
-  const handleSubmit = () => {
-    if (!titre || !description || !prix) {
+  const router = useRouter();
+
+  const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+  const data = [
+    {key: 'Véhicule', value: "Véhicule"},
+    {key: 'Électronique', value: "Électronique"},
+    {key: 'Immobilier', value: "Immobilier"},
+    {key: 'Autres', value: "Autres"},
+  ];
+  // Vérifiez si l'utilisateur est connecté au montage du composant
+  useEffect(() => {
+    checkUserLoggedIn(router);
+  }, []);
+
+  const handleSubmit = async () => {
+    const userStore = await AsyncStorage.getItem('user');
+    const user = JSON.parse(userStore);
+    if (!user || !user.id) {
+      Alert.alert("Erreur", "Utilisateur non connecté.");
+      return;
+    }
+    if (!titre || !selected || !prix) {
       Alert.alert("Erreur", "Tous les champs doivent être remplis");
       return;
     }
-    Alert.alert("Annonce ajoutée", `Titre : ${titre}\nDescription : ${description}\nPrix : ${prix}`);
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/annonces/new`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          titre,
+          prix,
+          image,
+          categorie: selected,
+          description,
+          user_id: user.id
+        }),
+      });
+      const data = await res.json();
+      console.log(data);
+      if (res.ok){
+        Alert.alert("Erreur", "Annonce créé avec succès !");
+        router.push("../annonce/liste_annonce");
+      }else {
+        Alert.alert('Erreur', data.message || "Une erreur est survenue.");
+      }
+    }catch (error)
+    {
+      console.log(error);
+      Alert.alert('Erreur',"Erreur de connexion au serveur.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // @ts-ignore
     return (
       <View style={styles.container}>
         <Appbar.Header style={styles.appbar}>
-          <Appbar.BackAction color="white"  onPress={() => navigation.goBack()}/>
+          <Appbar.BackAction color="white"  onPress={() => router.push('/')}/>
           <Appbar.Content title="Ajouter Annonce" color="white" />
         </Appbar.Header>
-
+        <FlashMessage position="center" />
         <View style={styles.childContainer}>
-
-          {/* Champ Titre */}
-          <TextInput
-              style={styles.input}
-              placeholder="Titre de l'annonce"
-              value={titre}
-              onChangeText={setTitre}
-          />
-
-          {/* Champ Description */}
-          <TextInput
-              style={[styles.input, styles.textarea]}
-              placeholder="Description de l'annonce"
-              value={description}
-              onChangeText={setDescription}
-              multiline
-          />
-
-          {/* Champ Prix */}
-          <TextInput
-              style={styles.input}
-              placeholder="Prix de l'annonce"
-              value={prix}
-              onChangeText={setPrix}
-              keyboardType="numeric"
-          />
-
-          {/* Nouveau bouton Ajouter */}
-          <Button
-              icon="plus-circle"
-              mode="contained"
-              onPress={handleSubmit}
-              style={styles.button}
-          >
-            Ajouter l'annonce
-          </Button>
-
+          <Avatar.Icon icon="folder" size={60} style={styles.avatar}/>
+          <View style={styles.viewInput}>
+            <TextInput
+                style={styles.input}
+                placeholder="Titre de l'annonce"
+                value={titre}
+                onChangeText={setTitre}
+            />
+          </View>
+          <View style={styles.viewInput}>
+            <TextInput
+                style={styles.input}
+                placeholder="Prix de l'annonce"
+                value={prix}
+                onChangeText={setPrix}
+                keyboardType="numeric"
+            />
+          </View>
+          <View style={styles.viewInput}>
+            <TextInput
+                style={[styles.input, styles.textarea]}
+                placeholder="Description de l'annonce"
+                value={description}
+                onChangeText={setDescription}
+                multiline
+            />
+          </View>
+          <View style={styles.viewInput}>
+            <TextInput
+                style={styles.input}
+                placeholder="Image"
+                value={image}
+                onChangeText={setImage}
+                multiline
+            />
+          </View>
+          <View style={styles.selectedContenair}>
+            <SelectList
+                setSelected={setSelected}
+                data={data}
+                save="value"
+                placeholder="Choisir une catégorie"
+            />
+          </View>
+          <View style={styles.viewInput}>
+            <Button
+                icon="plus-circle"
+                mode="contained"
+                onPress={handleSubmit}
+                style={styles.button}
+            >
+              Ajouter l'annonce
+            </Button>
+          </View>
         </View>
       </View>
   );
@@ -77,6 +152,25 @@ const styles = StyleSheet.create({
     backgroundColor: "#E8EBEE",
 
   },
+  viewInput:{
+    width: "100%",
+    color: "#045659",
+  },
+  selectedText: {
+    marginTop: 20,
+    fontSize: 16,
+  },
+  selectedContenair: {
+    justifyContent: 'center',
+    paddingBottom: 40,
+    padding: 10,
+    width: "100%",
+    height: 80,
+  },
+  avatar: {
+    backgroundColor: "#045659",
+    marginBottom: 20,
+  },
   container: {
     flex: 1,
     paddingHorizontal: 0,
@@ -90,7 +184,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   appbar: {
-    backgroundColor: "#357AB7",
+    backgroundColor: "#045659",
     color: "#fff",
   },
   input: {
