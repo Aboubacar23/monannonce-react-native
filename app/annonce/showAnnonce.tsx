@@ -1,9 +1,21 @@
 import React, {use, useEffect, useState} from "react";
-import {View, Text, StyleSheet, Image, Button, Alert, ActivityIndicator, FlatList} from "react-native";
-import {useLocalSearchParams, useNavigation, useRouter} from "expo-router";
-import {Appbar} from "react-native-paper";
-import {fetchAnnonceDetails} from "@/app/utils/annonce";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Button,
+  Alert,
+  ActivityIndicator,
+  FlatList,
+  TouchableOpacity, TextInput
+} from "react-native";
+import {router, useLocalSearchParams, useNavigation, useRouter} from "expo-router";
+import {Appbar, Card} from "react-native-paper";
+import {fetchAnnonceDetails, handleDeleteAnnonce, handleAddComment} from "@/app/utils/annonce";
 import FlashMessage, {showMessage} from "react-native-flash-message";
+import moment from "moment/moment";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ShowAnnonce() {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -30,7 +42,6 @@ export default function ShowAnnonce() {
       setLoading(false); // Désactiver l'indicateur de chargement
     }
   };
-
 
   useEffect(() => {
     if (id) {
@@ -70,20 +81,91 @@ export default function ShowAnnonce() {
   return (
       <View style={styles.container}>
         <Appbar.Header style={styles.appbar}>
-          <Appbar.BackAction color="white"  onPress={() => navigation.goBack()}/>
+          <Appbar.BackAction color="white"  onPress={() => router.push('/')}/>
           <Appbar.Content title="Détails annonce" color="white" />
           <Appbar.Action icon="plus" color="white" onPress={() => router.push({pathname: "/annonce/ajoutAnnonce"})} />
         </Appbar.Header>
+
         <FlashMessage position="center" />
-        <View style={styles.chilDContainer}>
-            <Image source={{ uri: annonce.image }} style={styles.image} />
-            <Text style={styles.title}>{annonce.titre} | Prix : {annonce.prix.toFixed(2)} €</Text>
-            <Text style={styles.description}>{annonce.description}</Text>
-            <Text style={styles.contact}>Annonceur : {user.nom} {user.prenom}</Text>
-        </View>
 
         <View style={styles.chilDContainer}>
-          <Text style={styles.title}>Commentaires</Text>
+          <Card style={styles.card}>
+            <Image source={{ uri: annonce.image }} style={styles.image} />
+            <View style={styles.titleContainer}>
+              <Text style={styles.titre}>{annonce.titre}</Text>
+              <Text style={styles.prix}>{annonce.prix.toFixed(2)} Є</Text>
+            </View>
+            <View style={styles.featuresContainer}>
+              <View style={styles.feature}>
+                <Text style={styles.featureTitle}>Catégorie</Text>
+                <Text style={styles.featureValue}>{annonce.categorie}</Text>
+              </View>
+              <View style={styles.feature}>
+                <Text style={styles.featureTitle}>Statut</Text>
+                <Text style={styles.featureValue}>{annonce.statut}</Text>
+              </View>
+              <View style={styles.feature}>
+                <Text style={styles.featureTitle}>Date</Text>
+                <Text style={styles.featureValue}>{moment(annonce.createdAt).locale('fr').format('DD-MM-YYYY')}</Text>
+              </View>
+            </View>
+            <View style={styles.actionsContainer}>
+              <TouchableOpacity style={styles.buttonPrimary}
+                                onPress={() => Alert.alert("Description", annonce.description)}>
+                <Text style={styles.buttonPrimaryText}>Voir Description</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                  style={styles.buttonSecondary}
+                  onPress={() =>
+                      Alert.alert(
+                          "Confirmation",
+                          "Êtes-vous sûr de vouloir supprimer cette annonce ?",
+                          [
+                            { text: "Annuler", style: "cancel" },
+                            {
+                              text: "Supprimer",
+                              style: "destructive",
+                              onPress: () => handleDeleteAnnonce(annonce.id),
+                            },
+                          ]
+                      )
+                  }>
+                <Text style={styles.buttonSecondaryText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </Card>
+        </View>
+
+        <View style={[styles.commentInputContainer, styles.card]}>
+          <TextInput
+              style={styles.commentInput}
+              placeholder="Ajouter objet..."
+              placeholderTextColor="#777"
+              value={objet}
+              onChangeText={(text) => setObjet(text)}
+          />
+          <TextInput
+            style={styles.commentInput}
+            placeholder="Ajouter un commentaire..."
+            value={description}
+            onChangeText={(text) => setDescription(text)}
+          />
+          <TouchableOpacity
+              style={styles.buttonPrimary}
+              onPress={() => handleAddComment(
+                  annonce?.id,
+                  objet,
+                  description,
+                  setObjet,
+                  setDescription,
+                  setLoading
+              )}
+          >
+            <Text style={styles.buttonPrimaryText}>Envoyer</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.chilDContainer}>
+          <Text style={styles.titre}>Commentaires</Text>
           <FlatList
               data={commentaires}
               keyExtractor={(item) => item.id.toString()}
@@ -102,7 +184,7 @@ const styles = StyleSheet.create({
   },
   chilDContainer: {
     flex: 1,
-    padding: 20,
+    padding: 2,
     backgroundColor: "#E8EBEE",
   },
   loadingContainer: {
@@ -115,9 +197,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#045659",
     color: "#fff",
   },
-  header: {
-    backgroundColor: "#5b33ff", // Bleu comme l'image
-  },
+
   errorContainer: {
     flex: 1,
     justifyContent: "center",
@@ -125,15 +205,10 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 200,
+    height: 150,
     resizeMode: "cover",
-    marginBottom: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
+
   commentSection: {
     padding: 20,
     backgroundColor: "#f9f9f9",
@@ -141,17 +216,9 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     marginBottom: 10,
-    color: "#555",
+    color: "#f9f9f9",
   },
-  price: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  contact: {
-    fontSize: 16,
-    color: "#007BFF",
-  },
+
   commentAuthor: {
     fontWeight: "bold",
     marginBottom: 5,
@@ -167,32 +234,37 @@ const styles = StyleSheet.create({
   },
 
   commentInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
+    flexDirection: "column",
+   // alignItems: "center",
+    marginVertical: 10,
+    marginTop: 110,
+    padding: 10,
+    color: "#000",
+    paddingHorizontal: 10,
   },
   commentInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#045659",
+    fontWeight: "bold",
     borderRadius: 5,
-    padding: 10,
+    padding: 15,
+    margin: 10,
     marginRight: 10,
+    backgroundColor: "#f0f8ff",
+    color: "#000",
   },
   card: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#fff",
     borderRadius: 10,
-    padding: 10,
-    marginBottom: 5,
-    shadowColor: "#3b5998",
+    shadowColor: "#fff",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 2,
-    width: "100%",
-    alignSelf: "center",
+    shadowRadius: 5,
+    elevation: 3,
+    margin: 10,
+    padding: 5,
+    overflow: "hidden",
   },
 
   cardContent: {
@@ -208,5 +280,75 @@ const styles = StyleSheet.create({
     color: "#777",
     marginTop: 2,
     fontStyle: "italic",
+  },
+  titre: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  prix: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "#045659",
+  },
+  featuresContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+    backgroundColor: "#f9f9f9",
+  },
+  feature: {
+    alignItems: "center",
+  },
+  featureTitle: {
+    fontSize: 13,
+    color: "#777",
+    marginBottom: 5,
+  },
+  featureValue: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  actionsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 15,
+    backgroundColor: "#fff",
+  },
+  buttonPrimary: {
+    backgroundColor: "#045659",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonPrimaryText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    alignItems: "center"
+  },
+  buttonSecondary: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#cb1414",
+  },
+  buttonSecondaryText: {
+    color: "#cb1414",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  navLinks: {
+    flexDirection: "row", // Les liens sont alignés horizontalement
+    alignItems: "center",
+  },
+  titleContainer: {
+    padding: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });

@@ -5,6 +5,7 @@ import {useNavigation, useRouter} from "expo-router";
 import {SelectList} from "react-native-dropdown-select-list";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {checkUserLoggedIn} from "@/app/hooks/checkUserLoggedIn";
+import FlashMessage from "react-native-flash-message";
 
 export default function AjouterAnnonce() {
   const [titre, setTitre] = useState("");
@@ -77,9 +78,10 @@ export default function AjouterAnnonce() {
     return (
       <View style={styles.container}>
         <Appbar.Header style={styles.appbar}>
-          <Appbar.BackAction color="white"  onPress={() => navigation.goBack()}/>
+          <Appbar.BackAction color="white"  onPress={() => router.push('/')}/>
           <Appbar.Content title="Ajouter Annonce" color="white" />
         </Appbar.Header>
+        <FlashMessage position="center" />
         <View style={styles.childContainer}>
           <Avatar.Icon icon="folder" size={60} style={styles.avatar}/>
           <View style={styles.viewInput}>

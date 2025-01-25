@@ -61,7 +61,7 @@ const Login = () => {
                     type: 'success',
                     icon: 'success',
                 });
-                router.push("../annonce/liste_annonce"); // Redirection vers la page d'accueil après connexion
+                router.push("/"); // Redirection vers la page d'accueil après connexion
             } else {
                 Alert.alert('Erreur', data.message || "Identifiants incorrects.");
             }
@@ -76,7 +76,7 @@ const Login = () => {
     return (
         <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                <Appbar.Action icon="menu" color="white"/>
+                <Appbar.BackAction color="white" onPress={() => router.push({pathname: "/"}) } />
                 <Appbar.Content title="Se Connecter" color="white" />
                 <Appbar.Action icon="plus" color="white" onPress={() => router.push({pathname: "/annonce/ajoutAnnonce"})} />
             </Appbar.Header>

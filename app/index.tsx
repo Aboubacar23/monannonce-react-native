@@ -47,7 +47,7 @@ export default function App() {
             setUser(null);
             await AsyncStorage.removeItem("user");
             Alert.alert("Déconnexion", 'Vous avez été déconnecté. ');
-            router.push("/annonce/liste_annonce");
+            router.push("/");
         }catch (error)
         {
             Alert.alert('Error', 'Vous avez été déconnecté.');
