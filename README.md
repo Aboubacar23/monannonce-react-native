@@ -47,7 +47,12 @@ Cela ouvrira une interface web où vous pourrez choisir :
 
 - **Gestion des annonces** : Créer, consulter, modifier et supprimer des annonces.
 - **Connexion à une API Backend** : Communication avec le backend via des requêtes HTTP pour synchroniser les données.
-
+-  Register
+-  Login
+-  Ajouter une annonce
+-  Upload image
+-  détails annonce
+-  ajouter commentaire
 ## Variables d'environnement
 
 Ajoutez un fichier `.env` à la racine pour configurer les variables liées à l'API :
