@@ -18,6 +18,7 @@ import moment from "moment";
 
 export default function ListeAnnonce() {
     const API_URL = process.env.EXPO_PUBLIC_API_URL;
+    const PATH_URL = process.env.EXPO_PUBLIC_PATH_URL;
     const [annonces, setAnnonces] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
@@ -25,7 +26,6 @@ export default function ListeAnnonce() {
     const router = useRouter();
 
     const fetchAnnonces = async () => {
-        console.log("URL : ", API_URL);
         try {
             const response = await fetch(`${API_URL}/annonces/lists`);
             if (!response.ok)
@@ -68,7 +68,7 @@ export default function ListeAnnonce() {
     // @ts-ignore
     const renderAnnonce = ({ item }) => (
         <Card style={styles.card}>
-            <Image source={{ uri: item.image }} style={styles.image} />
+                <Image source={{ uri: `${PATH_URL}/${item.image}` }} style={styles.image} />
             <View style={styles.titleContainer}>
                 <Text style={styles.titre}>{item.titre}</Text>
                 <Text style={styles.prix}>{item.prix.toFixed(2)} Є</Text>

@@ -12,18 +12,18 @@ import {
 } from "react-native";
 import {router, useLocalSearchParams, useNavigation, useRouter} from "expo-router";
 import {Appbar, Card} from "react-native-paper";
-import {fetchAnnonceDetails, handleDeleteAnnonce, handleAddComment} from "@/app/utils/annonce";
+import {fetchAnnonceDetails, handleDeleteAnnonce} from "@/app/utils/annonce";
 import FlashMessage, {showMessage} from "react-native-flash-message";
 import moment from "moment/moment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ShowAnnonce() {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
+  const PATH_URL = process.env.EXPO_PUBLIC_PATH_URL;
   const {id} = useLocalSearchParams();
   const [loading, setLoading] = useState(true); // État pour l'indicateur de chargement
   const [annonce, setAnnonce] = useState(null); // État pour stocker l'annonce
   const [user, setUser] = useState(null); // État pour stocker l'annonce
-  const navigation = useNavigation();
   const [objet, setObjet] = useState("");
   const [description, setDescription ] = useState("");
   const [commentaires, setCommentaires] = useState([]);
@@ -40,6 +40,73 @@ export default function ShowAnnonce() {
       Alert.alert("Erreur", error.message);
     } finally {
       setLoading(false); // Désactiver l'indicateur de chargement
+    }
+  };
+
+  const handleAddComment = async () => {
+    const userStore = await AsyncStorage.getItem('user');
+    const user = JSON.parse(userStore);
+    if (!user || !user.id)
+    {
+      showMessage({
+        message: "Erreur",
+        description: "Veuillez vous connecter pour commenter",
+        type: "danger",
+      });
+      return;
+    }
+
+    if(!description.trim() || !objet.trim())
+    {
+      Alert.alert("Erreur","Tous les champs doivent être remplir");
+      /*showMessage({
+        message: "Erreur",
+        description: "Tous les champs doivent être remplir.",
+        type: "danger",
+        icon: "danger"
+      });*/
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/commentaires/new`,{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          description: description.trim(),
+          objet: objet.trim(),
+          user_id: user?.id,
+          annonce_id: annonce?.id
+        })
+      });
+
+      if (!response.ok)
+      {
+        showMessage({
+          message: "Erreur",
+          description: "lors de l'ajout du commentaire.",
+          type: "danger",
+          icon: "danger"
+        });
+        return;
+      }
+
+      const newComment = await response.json();
+      setDescription(""); // Réinitialiser le champ de texte
+      setObjet("");
+      showMessage({
+        message: "Success",
+        description: "Commentaire ajouté avec succès !",
+        type: "success",
+        icon: "success"
+      });
+      router.push({ pathname:"/annonce/showAnnonce", params: { id: annonce?.id } })
+
+    }catch(error) {
+      Alert.alert("Erreur", error.message);
     }
   };
 
@@ -90,7 +157,7 @@ export default function ShowAnnonce() {
 
         <View style={styles.chilDContainer}>
           <Card style={styles.card}>
-            <Image source={{ uri: annonce.image }} style={styles.image} />
+            <Image source={{ uri: `${PATH_URL}/${annonce.image}` }} style={styles.image} />
             <View style={styles.titleContainer}>
               <Text style={styles.titre}>{annonce.titre}</Text>
               <Text style={styles.prix}>{annonce.prix.toFixed(2)} Є</Text>
@@ -140,26 +207,19 @@ export default function ShowAnnonce() {
           <TextInput
               style={styles.commentInput}
               placeholder="Ajouter objet..."
-              placeholderTextColor="#777"
               value={objet}
               onChangeText={(text) => setObjet(text)}
           />
+
           <TextInput
-            style={styles.commentInput}
-            placeholder="Ajouter un commentaire..."
-            value={description}
-            onChangeText={(text) => setDescription(text)}
+              style={styles.commentInput}
+              placeholder="Ajouter un commentaire..."
+              value={description}
+              onChangeText={(text) => setDescription(text)}
           />
           <TouchableOpacity
               style={styles.buttonPrimary}
-              onPress={() => handleAddComment(
-                  annonce?.id,
-                  objet,
-                  description,
-                  setObjet,
-                  setDescription,
-                  setLoading
-              )}
+              onPress={() => handleAddComment()}
           >
             <Text style={styles.buttonPrimaryText}>Envoyer</Text>
           </TouchableOpacity>
@@ -180,12 +240,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 0,
-    backgroundColor: "#E8EBEE",
+   // backgroundColor: "#E8EBEE",
   },
   chilDContainer: {
     flex: 1,
     padding: 2,
-    backgroundColor: "#E8EBEE",
+    //backgroundColor: "#E8EBEE",
   },
   loadingContainer: {
     flex: 1,
@@ -213,11 +273,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#f9f9f9",
   },
-  description: {
-    fontSize: 16,
-    marginBottom: 10,
-    color: "#f9f9f9",
-  },
+
 
   commentAuthor: {
     fontWeight: "bold",
@@ -230,16 +286,13 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
   },
 
   commentInputContainer: {
     flexDirection: "column",
-   // alignItems: "center",
     marginVertical: 10,
     marginTop: 110,
     padding: 10,
-    color: "#000",
     paddingHorizontal: 10,
   },
   commentInput: {
@@ -248,11 +301,12 @@ const styles = StyleSheet.create({
     borderColor: "#045659",
     fontWeight: "bold",
     borderRadius: 5,
-    padding: 15,
-    margin: 10,
+    padding: 20,
+    margin: 5,
     marginRight: 10,
-    backgroundColor: "#f0f8ff",
-    color: "#000",
+    color: "#000", // Assurez-vous que le texte est visible
+    backgroundColor: "#fff", // Couleur de fond blanche
+    fontSize: 16, // Taille de police suffisante
   },
   card: {
     backgroundColor: "#fff",
