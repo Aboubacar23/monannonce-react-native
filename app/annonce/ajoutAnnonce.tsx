@@ -1,20 +1,22 @@
 import React, {useEffect, useState} from "react";
-import { View, Text, TextInput, StyleSheet, Alert } from "react-native";
-import {Appbar, Avatar, Button, Title} from "react-native-paper";
-import {useNavigation, useRouter} from "expo-router";
+import {View, TextInput, StyleSheet, Alert, Image, ActivityIndicator, Text} from "react-native";
+import {Appbar, Avatar, Button} from "react-native-paper";
+import {useRouter} from "expo-router";
 import {SelectList} from "react-native-dropdown-select-list";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {checkUserLoggedIn} from "@/app/hooks/checkUserLoggedIn";
 import FlashMessage from "react-native-flash-message";
+import * as ImagePicker from 'expo-image-picker';
 
 export default function AjouterAnnonce() {
   const [titre, setTitre] = useState("");
   const [description, setDescription] = useState("");
-  const [prix, setPrix] = useState("");
+  const [prix, setPrix] = useState();
   const [image, setImage] = useState("");
   const [selected, setSelected ] = useState('Véhicule');
   const [loading, setLoading ] = useState(false);
-  const navigation = useNavigation();
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const router = useRouter();
 
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -42,20 +44,25 @@ export default function AjouterAnnonce() {
       return;
     }
     setLoading(true);
+      // Construction de FormData pour envoyer les données et l'image
+      const formData = new FormData();
+      formData.append("titre", titre);
+      formData.append("prix", prix);
+      formData.append("categorie", selected);
+      formData.append("description", description);
+      formData.append("user_id", user.id);
+      formData.append("image", {
+        uri: image,
+        name: "image.jpg",
+        type: "image/jpeg",
+      });
     try {
       const res = await fetch(`${API_URL}/annonces/new`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          titre,
-          prix,
-          image,
-          categorie: selected,
-          description,
-          user_id: user.id
-        }),
+        body: formData,
       });
       const data = await res.json();
       console.log(data);
@@ -73,6 +80,28 @@ export default function AjouterAnnonce() {
       setLoading(false);
     }
   };
+  const selectImage = async () => {
+    try {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert("Permission requise", "Veuillez autoriser l'accès à la galerie.");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Erreur", "Impossible de sélectionner une image.");
+    }
+  };
 
   // @ts-ignore
     return (
@@ -85,6 +114,7 @@ export default function AjouterAnnonce() {
         <View style={styles.childContainer}>
           <Avatar.Icon icon="folder" size={60} style={styles.avatar}/>
           <View style={styles.viewInput}>
+            <Text>Titre</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Titre de l'annonce"
@@ -93,6 +123,7 @@ export default function AjouterAnnonce() {
             />
           </View>
           <View style={styles.viewInput}>
+            <Text>Prix</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Prix de l'annonce"
@@ -102,6 +133,7 @@ export default function AjouterAnnonce() {
             />
           </View>
           <View style={styles.viewInput}>
+            <Text>Description</Text>
             <TextInput
                 style={[styles.input, styles.textarea]}
                 placeholder="Description de l'annonce"
@@ -110,22 +142,21 @@ export default function AjouterAnnonce() {
                 multiline
             />
           </View>
-          <View style={styles.viewInput}>
-            <TextInput
-                style={styles.input}
-                placeholder="Image"
-                value={image}
-                onChangeText={setImage}
-                multiline
-            />
-          </View>
           <View style={styles.selectedContenair}>
+            <Text>Catégorie</Text>
             <SelectList
                 setSelected={setSelected}
                 data={data}
                 save="value"
                 placeholder="Choisir une catégorie"
             />
+          </View>
+          <View style={styles.viewInput}>
+            <Button
+                icon="image"
+                mode="contained"
+                onPress={selectImage} style={styles.buttonImage}></Button>
+            {image && <Image source={{ uri: image }} style={{ width: 100, height: 100 }} />}
           </View>
           <View style={styles.viewInput}>
             <Button
@@ -154,7 +185,6 @@ const styles = StyleSheet.create({
   },
   viewInput:{
     width: "100%",
-    color: "#045659",
   },
   selectedText: {
     marginTop: 20,
@@ -163,9 +193,9 @@ const styles = StyleSheet.create({
   selectedContenair: {
     justifyContent: 'center',
     paddingBottom: 40,
-    padding: 10,
+    padding: 5,
     width: "100%",
-    height: 80,
+    height: 100,
   },
   avatar: {
     backgroundColor: "#045659",
@@ -190,7 +220,8 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     height: 40,
-    borderColor: "#ccc",
+    color: "#544c4c",
+    borderColor: "#045659",
     borderWidth: 1,
     borderRadius: 5,
     paddingLeft: 10,
@@ -211,6 +242,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginVertical: 5,
     backgroundColor: "#045659"
+  },
+  buttonImage:  {
+    width: "100%",
+    height: 80,
+    fontSize: 50,
+    paddingVertical: 10,
+    marginVertical: 5,
+    backgroundColor: "#b9c5d9"
   },
   link: {
     marginTop: 10,

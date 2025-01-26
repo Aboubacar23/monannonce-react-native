@@ -1,5 +1,6 @@
 import {showMessage} from "react-native-flash-message";
 import {router} from "expo-router";
+import {Alert} from "react-native";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -54,25 +55,23 @@ export const handleAddComment = async (annonceId, objet, description, setDescrip
     const userStore = await AsyncStorage.getItem("user");
     const user = JSON.parse(userStore);
 
+    console.log('Je suis ici');
     if (!user || !user.id) {
-        showMessage({
-            message: "Erreur",
-            description: "Veuillez vous connecter pour commenter",
-            type: "danger",
-        });
+        Alert.alert("Erreur", "Veuillez vous connecter pour commenter");
         return;
     }
 
     if (!description.trim() || !objet.trim()) {
-        showMessage({
+        Alert.alert("Erreur", "Tous les champs doivent être remplis");
+        /*showMessage({
             message: "Erreur",
             description: "Tous les champs doivent être remplis.",
             type: "danger",
             icon: "danger",
-        });
+        });*/
         return;
     }
-
+    console.log("URL", API_URL);
     setLoading(true);
     try {
         const response = await fetch(`${API_URL}/commentaires/new`, {
